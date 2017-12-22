@@ -1,0 +1,10 @@
+hash: fb80e7ec45997f22f433afbb03346b38f1ba6a4ed11f51487c79a5af026ab197
+updated: 2017-12-22T18:41:57.66359+09:00
+imports:
+- name: github.com/joho/godotenv
+  version: a79fa1e548e2c689c241d10173efd51e5d689d5b
+- name: github.com/lib/pq
+  version: 83612a56d3dd153a94a629cd64925371c9adad78
+  subpackages:
+  - oid
+testImports: []
