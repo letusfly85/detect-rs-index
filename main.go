@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"github.com/joho/godotenv"
+	"github.com/olekukonko/tablewriter"
 	"log"
 	"os"
 	"strconv"
@@ -125,8 +126,9 @@ func main() {
 		log.Fatalln("failed query:", err)
 	}
 
+	var indexColumnMetaList = []IndexColumnMeta{}
 	for row.Next() {
-		indexColumnMeta := new(IndexColumnMeta)
+		indexColumnMeta := IndexColumnMeta{}
 		err := row.Scan(&indexColumnMeta.TableName,
 			&indexColumnMeta.IndexName,
 			&indexColumnMeta.AttrNumber,
@@ -134,9 +136,16 @@ func main() {
 		if err != nil {
 			log.Fatalln("failed scan:", err)
 		}
-
-		log.Printf("%+v\n", indexColumnMeta)
+		indexColumnMetaList = append(indexColumnMetaList, indexColumnMeta)
 	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"table_name", "index_name", "attrnum", "column_name"})
+	for _, v := range indexColumnMetaList {
+		strAry := []string{v.TableName, v.IndexName, strconv.Itoa(v.AttrNumber), v.ColumnName}
+		table.Append(strAry)
+	}
+	table.Render()
 	if err := row.Err(); err != nil {
 		log.Fatalln("failed iterate:", err)
 	}

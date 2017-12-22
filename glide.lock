@@ -1,5 +1,5 @@
-hash: fb80e7ec45997f22f433afbb03346b38f1ba6a4ed11f51487c79a5af026ab197
-updated: 2017-12-22T18:41:57.66359+09:00
+hash: 26c696f36adaf1477439079904c99cd0d470d9f892ee533a525584a8e67d3fa1
+updated: 2017-12-22T22:41:09.389022+09:00
 imports:
 - name: github.com/joho/godotenv
   version: a79fa1e548e2c689c241d10173efd51e5d689d5b
@@ -7,4 +7,8 @@ imports:
   version: 83612a56d3dd153a94a629cd64925371c9adad78
   subpackages:
   - oid
+- name: github.com/mattn/go-runewidth
+  version: 9e777a8366cce605130a531d2cd6363d07ad7317
+- name: github.com/olekukonko/tablewriter
+  version: 65fec0d89a572b4367094e2058d3ebe667de3b60
 testImports: []
