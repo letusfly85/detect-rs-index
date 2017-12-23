@@ -20,6 +20,7 @@ type IndexMeta struct {
 }
 
 type IndexColumnMeta struct {
+	SchemaName string `sql:"schema_name"`
 	TableName  string `sql:"table_name"`
 	IndexName  string `sql:"index_name"`
 	AttrNumber int    `sql:"attr_number"`
@@ -48,6 +49,7 @@ order by
 func getIndexColumnQuery(str string) string {
 	var query = `
 select
+    ns.nspname as schema_name,
     t.relname as table_name,
     i.relname as index_name,
     a.attnum as attr_number,
@@ -56,13 +58,15 @@ from
     pg_class t,
     pg_class i,
     pg_index ix,
-    pg_attribute a
+    pg_attribute a,
+    pg_namespace ns
 where
     t.oid = ix.indrelid
     and i.oid = ix.indexrelid
     and a.attrelid = t.oid
     and a.attnum in (` + str + `)
     and t.relkind = 'r'
+    and t.relnamespace = ns.oid
     and t.relname like $1
 order by
     a.attnum,
@@ -129,7 +133,9 @@ func main() {
 	var indexColumnMetaList = []IndexColumnMeta{}
 	for row.Next() {
 		indexColumnMeta := IndexColumnMeta{}
-		err := row.Scan(&indexColumnMeta.TableName,
+		err := row.Scan(
+			&indexColumnMeta.SchemaName,
+			&indexColumnMeta.TableName,
 			&indexColumnMeta.IndexName,
 			&indexColumnMeta.AttrNumber,
 			&indexColumnMeta.ColumnName)
@@ -140,9 +146,9 @@ func main() {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"table_name", "index_name", "attrnum", "column_name"})
+	table.SetHeader([]string{"schema_name", "table_name", "index_name", "attrnum", "column_name"})
 	for _, v := range indexColumnMetaList {
-		strAry := []string{v.TableName, v.IndexName, strconv.Itoa(v.AttrNumber), v.ColumnName}
+		strAry := []string{v.SchemaName, v.TableName, v.IndexName, strconv.Itoa(v.AttrNumber), v.ColumnName}
 		table.Append(strAry)
 	}
 	table.Render()
